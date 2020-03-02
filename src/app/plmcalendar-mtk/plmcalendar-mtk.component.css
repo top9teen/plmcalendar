@@ -1,0 +1,41 @@
+.loading-curtain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+    background-color:#DAD8D7;
+  }
+  
+  .loading-icon {
+    margin-top: 20%;
+    color: white;
+  }
+  .pointer {
+    cursor: pointer;
+  }
+  .tc-custom {
+    background-color:white;
+    color: black;
+    border:1px solid #3788d8;
+    cursor: -webkit-grab; cursor: grab;
+  }
+
+  @font-face {
+    font-family: DBHelvethaicaX;
+    src: url("../../assets/fonts/DBHelvethaicaXv3.2.ttf");
+  }
+   
+
+  .container-fluid {
+  font-family: DBHelvethaicaX;
+  }
+
+
+  body {
+    font-size: 15px !important;
+    font-family: DBHelvethaicaX;
+    ;
+  }
+  

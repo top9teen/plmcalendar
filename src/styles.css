@@ -1,0 +1,40 @@
+/* Add application styles & imports to this file! */
+@import '~@fullcalendar/core/main.css';
+@import '~@fullcalendar/daygrid/main.css';
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+@font-face {
+  font-family: DBHelvethaicaX;
+  src: url("./assets/fonts/DBHelvethaicaXv3.2.ttf");
+}
+
+@font-face {
+  font-family: DBHelvethaicaXBd;
+  src: url("./assets/fonts/DBHelvethaicaXBdv3.2.ttf");
+}
+
+
+.fc-title {
+    font-size: 0.8em;
+  }
+
+.fc-time {
+  display: none;
+}
+
+.fc-event {
+  font-size: 0.8em;
+}
+
+.fc-row{
+  cursor: pointer;
+}
+
+.container-fluid {
+  font-family: DBHelvethaicaXBd;
+}
+
+body {
+  font-size: 17.5px !important;
+  font-family: DBHelvethaicaXBd;
+}

@@ -1,0 +1,147 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='https://use.fontawesome.com/releases/v5.0.6/css/all.css' rel='stylesheet'>
+<link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' rel='stylesheet' />
+<full-calendar *ngIf="options" #fullcalendar [editable]="false" [eventLimit]="true" [events]="datacalender"
+  [header]="options.header" [customButtons]="options.customButtons" [plugins]="options.plugins"
+  (eventClick)="eventClick($event)"
+  (eventRender)="eventRender($event)"></full-calendar>
+
+<div class="loading-curtain" *ngIf="isSaving">
+  <div class="col-md-12 text-center loading-icon" style="text-align: center;">
+    <i class="fa fa-spinner fa-spin" style="font-size:80px;"></i>
+  </div>
+</div>
+
+<div bsModal #modalRefshow="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+  aria-hidden="true" (onHidden)="hideModal()">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Detail</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngFor="let row of Datamulti;let i = index" style="font-size: 15px;">
+          <!-- st  -->
+          <div class="panel panel-default">
+            <div class="row">
+              <div class="row col-md-11">
+                <div class="col-md-3">
+                  <label class="pull-right">
+                    Product Name :
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="pull-left" style="margin-left:5px">
+                    <u>{{row.productName}}</u>
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="pull-right">
+                    Project Owner :
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="pull-left" style="margin-left:5px">
+                    <u>{{row.projectOwner}}</u>
+                  </label>
+                </div>
+              </div>
+
+              <div class="row col-md-11">
+                <div class="col-md-3">
+                  <label class="pull-right">
+                    Product Class :
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="pull-left" style="margin-left:5px">
+                    <u>{{row.productClass}}</u>
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="pull-right">
+                    Promotion Group :
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="pull-left" style="margin-left:5px">
+                    <u>{{row.promotionGroup}}</u>
+                  </label>
+                </div>
+              </div>
+
+              <div class="row col-md-11">
+                <div class="col-md-3">
+                  <label class="pull-right">
+                    Po Sub Group :
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="pull-left" style="margin-left:5px">
+                    <u>{{row.poSubGroup}}</u>
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="pull-right">
+                    On Production Date :
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="pull-left" style="margin-left:5px">
+                    <u>{{row.onPrdDt | date:'dd/MM/yyyy'}}</u>
+                  </label>
+                </div>
+              </div>
+
+              <div class="row col-md-11">
+                <div class="col-md-3">
+                  <label class="pull-right">
+                    Price Type :
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="pull-left" style="margin-left:5px">
+                    <u> {{row.priceType == null ? '-' : row.priceType}}</u>
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="pull-right">
+                    Status :
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="pull-left" style="margin-left:5px">
+                    <u>{{row.status}}</u>
+                  </label>
+                </div>
+              </div>
+              <div class="row col-md-12" >
+                <div class="row col-md-6" *ngFor="let data of row.flwProductDetailCode">
+                  <div class="col-md-6">
+                    <label class="pull-right">
+                      {{data.billingSystemDynField | lowercase}} :
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="pull-left" style="margin-left:5px">
+                      <u>{{data.billingSystemDynFieldValue}}</u>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <p></p>
+          <!-- ed  -->
+        </div>
+        <div class="text-center">
+          <button type="button" class="btn btn-danger " (click)="hideModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
