@@ -6,41 +6,39 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { PLM_SPRING_URL } from '../app.properties';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import { EventInput } from '@fullcalendar/core';
+import timeGrigPlugin from '@fullcalendar/timegrid';
 @Component({
   selector: 'app-plmcalendar-mtk',
   templateUrl: './plmcalendar-mtk.component.html',
   styleUrls: ['./plmcalendar-mtk.component.css']
 })
 export class PlmcalendarMtkComponent implements OnInit {
-  @ViewChild('fullcalendar') fullcalendar: FullCalendarComponent;
   @ViewChild('external') external: ElementRef;
   @ViewChild('modalRefshow')
   modalRefshow: ModalDirective;
 
-  datacalender: Calendarvalue[];
-  datacalenderShow: Calendarvalue[];
+  datacalender: EventInput[];
+  datacalenderShow: EventInput[];
   options: any;
   isSaving: boolean;
   istable: boolean;
   Datamulti: any[];
   projectId: string;
-  dataEvent: any[];
+  dataEvent: EventInput[];
   thisOnPrd: HistoryPlmPo[] = [];
   onPrdDate: Date;
+  setOnPrdDate: string;
   thisProject: HistoryPlmPo[] = [];
 
   // setData
   Mount: string;
   differ: any;
   calendar: any;
-
   // isCollapsed: boolean;
 
   dataCapacity: any[];
   dataPlmPo: any[];
-
-  myForm: FormGroup;
 
   constructor(
     public http: HttpClient,
@@ -56,8 +54,8 @@ export class PlmcalendarMtkComponent implements OnInit {
     this.dataEvent = [];
     this.datacalender = [];
     this.datacalenderShow = [];
-    this.setvx();
-    this.getDataCalenderEvent(this.projectId);
+    this.setToolsCalendar();
+    // this.getDataCalenderEvent(this.projectId);
     this.getAllByProjectId(this.projectId);
       // tslint:disable-next-line:no-unused-expression
   }
@@ -67,9 +65,9 @@ export class PlmcalendarMtkComponent implements OnInit {
     // tslint:disable-next-line: max-line-length
     await this.http.get(PLM_SPRING_URL + '/api/getFlwReserveAsCalendar/' + date + '/' + projectId).toPromise().then(async (data: any[]) => {
       data.forEach(element => {
-        let value = {} as Calendarvalue;
+        let value = {} as EventInput;
         value.backgroundColor = '#D07CDB';
-        value.date = element.onPrdDt + 'T00:00:00';
+        value.date = element.date + 'T00:00:00';
         // tslint:disable-next-line:max-line-length
         value.title = '<li>' + element.productNameMkt + '</li>';
         value.id = element.rowId;
@@ -108,16 +106,19 @@ export class PlmcalendarMtkComponent implements OnInit {
     this.isSaving = true;
     this.dataCapacity = [];
     this.dataPlmPo  = [];
-    this.onPrdDate = e.dateStr;
+    console.log(e.dateStr);
+    this.onPrdDate = new Date(e.dateStr);
+    this.setOnPrdDate = e.dateStr;
     this.getCapacity(e.dateStr, this.projectId);
     this.getDataPlmPo(e.dateStr);
     this.getAllThisOnPrd(e.dateStr);
     this.isSaving = false;
-    // console.log(e);
+
     // console.log(e.date);
   }
 
  async updateEvent(e) {
+  this.istable = true;
   console.log(e.event.id);
   console.log(e);
   console.log(e.event);
@@ -125,42 +126,39 @@ export class PlmcalendarMtkComponent implements OnInit {
   // tslint:disable-next-line:max-line-length
   await this.http.get(PLM_SPRING_URL + '/api/seveFlwReserveAsCalendarEvent/' +  e.event.id + '/' + e.event.start , { responseType: 'text' }).toPromise().then(async (data: any) => {
     alert(data);
-  }, err => console.log('ERROR on getDataCalenderEvent'));
-   window.location.reload();
+  }, err => console.log('ERROR on getDataCalenderEvent:'+err));
+  //  window.location.reload();
+  await this.getDataCalender(this.Mount, this.projectId);
+  await this.getCapacity(this.setOnPrdDate , this.projectId);
+  await this.getDataPlmPo(this.setOnPrdDate );
+  await this.getAllThisOnPrd(this.setOnPrdDate );
+  this.istable = false;
   }
 
   async delete(id) {
     // alert(id);
   }
 
-
   async setVariableFromQueryParams() {
     let splitted = window.location.href.split('=');
     this.projectId = splitted[1];
-  }
-
-  async getDataCalenderEvent(projectId) {
-    // tslint:disable-next-line: max-line-length
-    await this.http.get(PLM_SPRING_URL + '/api/getFlwReserveAsCalendarEvent/' +  projectId).toPromise().then(async (data: any[]) => {
-      this.dataEvent = data;
-    }, err => console.log('ERROR on getDataCalenderEvent'));
   }
 
   async getAllThisOnPrd(date) {
     // tslint:disable-next-line: max-line-length
     await this.http.get(PLM_SPRING_URL + '/api/getReserveByOnPrdDt/' + date).toPromise().then(async (data: HistoryPlmPo[]) => {
       this.thisOnPrd = data.sort();
-    }, err => console.log('ERROR on getAllThisOnPrd'));
+    }, err => console.log('ERROR on getAllThisOnPrd:'+err));
   }
 
   async getAllByProjectId(projectId) {
     // tslint:disable-next-line: max-line-length
     await this.http.get(PLM_SPRING_URL + '/api/getReserveOnPrdDtByPrjectId/' + projectId).toPromise().then(async (data: HistoryPlmPo[]) => {
       this.thisProject = data.sort();
-    }, err => console.log('ERROR on getAllThisOnPrd'));
+    }, err => console.log('ERROR on getAllThisOnPrd:'+err));
   }
 
-  setvx() {
+  setToolsCalendar() {
     this.options = {
       editable: true,
       eventLimit: true,
@@ -170,9 +168,9 @@ export class PlmcalendarMtkComponent implements OnInit {
       header: {
         left: 'prev today next ',
         center: 'title',
-        right  : 'month,agendaWeek,agendaDay'
+        right  : 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
       },
-      plugins: [dayGridPlugin, interactionPlugin],
+      plugins: [dayGridPlugin, timeGrigPlugin, interactionPlugin],
     };
   }
 
@@ -189,18 +187,13 @@ export class PlmcalendarMtkComponent implements OnInit {
       this.dataPlmPo = data;
     }, err => console.log('ERROR on getDataPlmPo'));
   }
-  // end class
-}
 
-export interface Calendarvalue {
-  title: string;
-  date: string;
-  backgroundColor: string;
-  id: string;
-  description: string;
-  rendering: string;
-  color: string;
-  editable: boolean;
+  async setdata(){
+    this.datacalenderShow = [
+      { title: 'Event Now', start: new Date() }
+    ];
+  }
+  // end class
 }
 
 export interface ReportCalendar {

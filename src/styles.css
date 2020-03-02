@@ -2,6 +2,7 @@
 @import '~@fullcalendar/core/main.css';
 @import '~@fullcalendar/daygrid/main.css';
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import '~@fullcalendar/timegrid/main.css';
 
 @font-face {
   font-family: DBHelvethaicaX;

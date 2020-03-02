@@ -2,6 +2,7 @@
   "name": "plm-calendar",
   "version": "0.0.0",
   "scripts": {
+    "1234": "ng serve --port 1234",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
@@ -28,6 +29,7 @@
     "@fullcalendar/core": "^4.3.1",
     "@fullcalendar/daygrid": "^4.3.0",
     "@fullcalendar/interaction": "^4.0.2",
+    "@fullcalendar/timegrid": "^4.0.2",
     "@types/jquery": "^3.3.33",
     "angular-in-memory-web-api": "0.5.4",
     "bootstrap": "^3.4.1",
@@ -59,6 +61,6 @@
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
-    "typescript": "^3.1.1"
+    "typescript": "~3.1.1"
   }
 }

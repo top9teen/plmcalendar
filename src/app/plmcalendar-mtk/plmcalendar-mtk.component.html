@@ -4,11 +4,13 @@
 <div class="container">
   <div class="row">
       <div class="col-md-6">
-        <full-calendar *ngIf="options" #fullcalendar [editable]="true" [eventLimit]="true" [events]="datacalenderShow"
+        <full-calendar *ngIf="options" [editable]="true" [eventLimit]="true" [events]="datacalenderShow"
           [header]="options.header" [customButtons]="options.customButtons" [plugins]="options.plugins"
           (eventRender)="eventRender($event)" (dateClick)="handleDateClick($event)"
           (datesRender)="handleDatesRender($event)" (eventDrop)="updateEvent($event)" (eventResize)="updateEvent($event)"
-          [height]="'auto'">
+          [height]="'auto'"
+          defaultView="dayGridMonth"
+          >
         </full-calendar>
       </div>
   </div>
@@ -51,7 +53,7 @@
     <div *ngIf="istable" class="col-md-6">
       <div class="panel-heading cursor-point">
         <h4 class="h4-panel-header">
-          This Project
+            My Project
         </h4>
       </div>
       <div class="col-md-12" class="panel-body" class="collapse-panel">
@@ -65,14 +67,22 @@
               <th class="text-center">Po Group</th>
               <th class="text-center">On Production Date</th>
               <th class="text-center">Submit Date</th>
-              <th class="text-center">Action</th>
+              <th class="text-center"><span><input type="checkbox" id="vehicle2" name="vehicle2" value="Car">select all</span></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngIf="thisProject.length < 1">
               <td colspan="7">No data to display.</td>
             </tr>
-            <tr *ngFor="let item of thisProject; let i = index">
+            <!-- <tr> -->
+              <tr *ngFor="let item of thisProject; let i = index">
+              <!-- <td class="text-center">1</td>
+              <td class="text-left">2</td>
+              <td class="text-left">3</td>
+              <td class="text-left">3</td>
+              <td class="text-left">3</td>
+              <td class="text-left">3</td> -->
+
               <td class="text-center">{{i+1}}</td>
               <td class="text-left">{{item.projectCode}}</td>
               <td class="text-left">{{item.productName}}</td>
@@ -80,12 +90,19 @@
               <td class="text-left">{{item.onPrdDt | date:'dd/MM/yyy'}}</td>
               <td class="text-left">{{(item.submitDt | date:'dd/MM/yyy') ? item.submitDt  != null : '-' }}</td>
               <td class="text-center">
-                <button><span *ngIf="item.projectRowId == projectId" >X</span></button>
+                <button (click)="setdata()"><span>set data
+                </span></button>
+                <!-- <button><span *ngIf="item.projectRowId == projectId" >set data
+                </span></button> -->
               </td>
             </tr>
           </tbody>
         </table>
+
       </div>
+        <div class="text-right">
+          <button class="btn btn-success" (click)="setdata()">Save</button>
+        </div>
     </div>
   </div>
 
@@ -93,7 +110,7 @@
     <div *ngIf="istable" class="col-md-6">
       <div class="panel-heading cursor-point">
         <h4 class="h4-panel-header">
-          History On Prd {{(onPrdDate | date:'dd/MM/yyy') ? onPrdDate  != null : '-' }}
+          History PlmPo On Prd  {{onPrdDate | date:'dd/MM/yyy'}}
         </h4>
       </div>
       <div class="col-md-12" class="panel-body" class="collapse-panel">
