@@ -4,14 +4,36 @@
 <div class="container">
   <div class="row">
       <div class="col-md-6">
-        <full-calendar *ngIf="options" [editable]="true" [eventLimit]="true" [events]="datacalenderShow"
-          [header]="options.header" [customButtons]="options.customButtons" [plugins]="options.plugins"
-          (eventRender)="eventRender($event)" (dateClick)="handleDateClick($event)"
-          (datesRender)="handleDatesRender($event)" (eventDrop)="updateEvent($event)" (eventResize)="updateEvent($event)"
+        <full-calendar *ngIf="options"
+          [editable]="true"
+          [eventLimit]="true"
+          [events]="datacalenderShow"
+          [header]="options.header"
+          [customButtons]="options.customButtons"
+          [plugins]="options.plugins"
+          (eventRender)="eventRender($event)"
+          (dateClick)="handleDateClick($event)"
+          (datesRender)="handleDatesRender($event)"
+          (eventDrop)="updateEvent($event)"
+          (eventResize)="updateEvent($event)"
           [height]="'auto'"
           defaultView="dayGridMonth"
+          (eventDragStop)="eventDragStop($event)"
+          [weekends]="false"
           >
         </full-calendar>
+      </div>
+      <div class="col-md-3">
+        <div #external>
+          <p>
+            <strong>Draggable Events</strong>
+          </p>
+          <div class='fc-event'>My Event 1</div>
+          <div class='fc-event'>My Event 2</div>
+          <div class='fc-event'>My Event 3</div>
+          <div class='fc-event'>My Event 4</div>
+          <div class='fc-event'>My Event 5</div>
+        </div>
       </div>
   </div>
   <br>
@@ -49,62 +71,6 @@
       </div>
     </div>
   </div>
-  <div class="row">
-    <div *ngIf="istable" class="col-md-6">
-      <div class="panel-heading cursor-point">
-        <h4 class="h4-panel-header">
-            My Project
-        </h4>
-      </div>
-      <div class="col-md-12" class="panel-body" class="collapse-panel">
-
-        <table class="table table-hover table-bordered table-condensed" style="text-align: center;">
-          <thead>
-            <tr style="text-align: center;">
-              <th class="text-center">No</th>
-              <th class="text-center">Project Code</th>
-              <th class="text-center">Product Name</th>
-              <th class="text-center">Po Group</th>
-              <th class="text-center">On Production Date</th>
-              <th class="text-center">Submit Date</th>
-              <th class="text-center"><span><input type="checkbox" id="vehicle2" name="vehicle2" value="Car">select all</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngIf="thisProject.length < 1">
-              <td colspan="7">No data to display.</td>
-            </tr>
-            <!-- <tr> -->
-              <tr *ngFor="let item of thisProject; let i = index">
-              <!-- <td class="text-center">1</td>
-              <td class="text-left">2</td>
-              <td class="text-left">3</td>
-              <td class="text-left">3</td>
-              <td class="text-left">3</td>
-              <td class="text-left">3</td> -->
-
-              <td class="text-center">{{i+1}}</td>
-              <td class="text-left">{{item.projectCode}}</td>
-              <td class="text-left">{{item.productName}}</td>
-              <td class="text-left">{{item.promotionGroup}}</td>
-              <td class="text-left">{{item.onPrdDt | date:'dd/MM/yyy'}}</td>
-              <td class="text-left">{{(item.submitDt | date:'dd/MM/yyy') ? item.submitDt  != null : '-' }}</td>
-              <td class="text-center">
-                <button (click)="setdata()"><span>set data
-                </span></button>
-                <!-- <button><span *ngIf="item.projectRowId == projectId" >set data
-                </span></button> -->
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-      </div>
-        <div class="text-right">
-          <button class="btn btn-success" (click)="setdata()">Save</button>
-        </div>
-    </div>
-  </div>
 
   <div class="row">
     <div *ngIf="istable" class="col-md-6">
@@ -137,7 +103,14 @@
               <td class="text-left">{{item.productName}}</td>
               <td class="text-left">{{item.promotionGroup}}</td>
               <td class="text-left">{{item.onPrdDt | date:'dd/MM/yyy'}}</td>
-              <td class="text-left">{{(item.submitDt | date:'dd/MM/yyy') ? item.submitDt  != null : '-' }}</td>
+              <td class="text-left">
+                <span *ngIf="item.submitDt != null">
+                  {{(item.submitDt | date:'dd/MM/yyy') }}
+                </span>
+                <span *ngIf="item.submitDt == null">
+                  -
+                </span>
+                <!-- {{(item.submitDt | date:'dd/MM/yyy') ?  item.submitDt  != null : '-' }}</td> -->
               <td class="text-center">
                 <button><span *ngIf="item.projectRowId == projectId" >X</span></button>
               </td>
