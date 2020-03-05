@@ -1,3 +1,4 @@
+
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
@@ -28,21 +29,23 @@ export class PlmcalendarMtkComponent implements OnInit {
   Datamulti: any[];
   projectId: string;
   dataEvent: EventInput[];
-  thisOnPrd: HistoryPlmPo[] = [];
   onPrdDate: Date;
   setOnPrdDate: string;
-  thisProject: HistoryPlmPo[] = [];
+  thisProject: HistoryProjectCalendar[] = [];
   dataValue: EventInput;
   datacalenderShow: EventInput[];
+  dataProjetEvent: any[];
   // setData
   Mount: string;
   differ: any;
   calendar: any;
+
+  cursorStatus: string;
   // isCollapsed: boolean;
 
   dataCapacity: any[];
-  dataPlmPo: any[];
-
+  dataProjectCalendar: any[];
+  dataDayOnPrd: Array<string>;
   constructor(
     public http: HttpClient,
     private fb: FormBuilder,
@@ -50,19 +53,22 @@ export class PlmcalendarMtkComponent implements OnInit {
   }
 
   async ngOnInit() {
+
+    this.isSaving = true;
     this.setVariableFromQueryParams();
     this.istable = false;
-    this.isSaving = false;
     // this.isCollapsed = true;
     this.dataEvent = [];
     this.datacalender = [];
     this.datacalenderShow = [];
-    this.thisOnPrd = [];
     this.thisProject = [];
+    this.dataProjetEvent = [];
     this.setToolsCalendar();
-    // this.getDataCalenderEvent(this.projectId);
-    this.getAllByProjectId(this.projectId);
-      // tslint:disable-next-line:no-unused-expression
+    this.getDataProjectEvent(this.projectId);
+    // this.getCapacityAllmont
+    setTimeout(() => {
+      this.isSaving = false;
+    }, 500);
   }
 
   async getDataCalender(date, projectId) {
@@ -86,12 +92,12 @@ export class PlmcalendarMtkComponent implements OnInit {
         }
           data2 = [];
           data2 = {
-            title: '<li>' + data[index].productNameMkt + '</li>',
+            title: '<li>' + data[index].productNameMkt + ' : ' + data[index].user + ' (' + data[index].count + ')</li>',
             date:  setdate,
             backgroundColor: color,
             id: data[index].rowId,
             editable: statusEdit,
-            description : data[index].onPrdDt
+            description : data[index].description
           };
           simpleData.push(data2);
       }
@@ -106,62 +112,109 @@ export class PlmcalendarMtkComponent implements OnInit {
   }
 
   eventRender(e) {
+    // console.log(e.event._def);
+    e.el.querySelectorAll('.fc-title')[0].innerHTML = e.el.querySelectorAll('.fc-title')[0].innerText;
+    if (e.event._def.extendedProps.description === 'No') {
+      console.log(e.event._instance.range.start);
+      this.isSaving = true;
+      // tslint:disable-next-line:max-line-length
+      this.http.get(PLM_SPRING_URL + '/api/seveFristValue/' +  e.event.id + '/' + e.event._instance.range.start , { responseType: 'text' }).toPromise().then();
+       alert('Add Data Success');
+      location.reload();
+    } else {
+
+    }
     // console.log('e', e.el.querySelectorAll('.fc-title')[0]);
-     e.el.querySelectorAll('.fc-title')[0].innerHTML = e.el.querySelectorAll('.fc-title')[0].innerText;
+
   }
 
-  handleDatesRender(e) {
-    this.istable = false;
-    console.log(e);
-    // console.log(e.view.title);
+ async handleDatesRender(e) {
+    this.isSaving = true;
     this.Mount = e.view.title;
-    this.getDataCalender(e.view.title, this.projectId);
+
     // tslint:disable-next-line:max-line-length
-    // tslint:disable-next-line:no-unused-expression
+   for (let index = 0; index < e.el.lastElementChild.children[1]
+    .children[0]
+    .cells[0]
+    .childNodes[0]
+    .childNodes[0]
+    .childNodes.length; index++) {
+    // tslint:disable-next-line:max-line-length
+    for (let index2 = 0; index2 < e.el.lastElementChild.children[1]
+      .children[0]
+      .cells[0]
+      .childNodes[0]
+      .childNodes[0]
+      .childNodes[index]
+      .children[0]
+      .childNodes[0]
+      .childNodes[0]
+      .childNodes[0]
+      .cells.length; index2++) {
+    // tslint:disable-next-line:max-line-length
+    // Check Color //
+   let data = await this.getCapacityAllMount(e.el.lastElementChild.children[1]
+      .children[0]
+      .cells[0]
+      .childNodes[0]
+      .childNodes[0]
+      .childNodes[index].childNodes[0]
+      .children[0]
+      .childNodes[0]
+      .childNodes[0]
+      .cells[index2].dataset.date);
+    if (!data) {
+      e.el.lastElementChild.children[1]
+      .children[0]
+      .cells[0]
+      .childNodes[0]
+      .childNodes[0]
+      .childNodes[index]
+      .childNodes[0]
+      .children[0]//
+      .childNodes[0]
+      .childNodes[0]
+      .cells[index2].style.background = '#e5e8e8';
+    }
+    }
+   }    // tslint:disable-next-line:max-line-length
+   await this.getDataCalender(e.view.title, this.projectId);
+   await this.getDataProjectEvent(this.projectId);
+   this.isSaving = false;
+    // tslint:disable-next-line:max-line-length
   }
 
   async handleDateClick(e) {
+    console.log(e);
     // handler method
+    this.isSaving = true;
     this.istable = true;
-    // this.isSaving = true;
     this.dataCapacity = [];
-    this.dataPlmPo  = [];
+    this.dataProjectCalendar = [];
     console.log(e.dateStr);
     this.onPrdDate = new Date(e.dateStr);
     this.setOnPrdDate = e.dateStr;
-// .fc-day {
-//   background: green;
-// }
-    console.log(e.dayEl);
-    console.log(e.dayEl.style);
-    // (document.querySelector('.app-alerts') as HTMLElement).style.top = '150px';
-    // tslint:disable-next-line:max-line-length
-    e.dayEl.style.background = 'green';
-    // e.el.querySelectorAll('.fc-title')[0].css = e.el.querySelectorAll('.fc-title')[0].innerText;
-    // e.css('background-color', 'red');
-
-
-    await this.getCapacity(e.dateStr, this.projectId);
-   await this.getDataPlmPo(e.dateStr);
-   await this.getAllThisOnPrd(e.dateStr);
-    // this.isSaving = false;
-
-    // console.log(e.date);
+   await this.getCapacity(e.dateStr, this.projectId);
+   await this.getDataProjectCalendar(e.dateStr);
+   await this.getAllByProjectId(e.dateStr);
+   this.isSaving = false;
   }
 
  async updateEvent(e) {
+   console.log(e);
   this.istable = false;
   // console.log(e.event.id);
   // console.log(e);
   // console.log(e.event);
   // console.log(e.event.start);
   // console.log(e.event._def.extendedProps.description);
+
   // tslint:disable-next-line:max-line-length
-  await this.http.get(PLM_SPRING_URL + '/api/seveFlwReserveAsCalendarEvent/' +  e.event.id + '/' + e.event.start , { responseType: 'text' }).toPromise().then(async (data: any) => {
-      alert(data);
-      this.datacalenderShow = [];
-      await this.getDataCalender(this.Mount, this.projectId);
-    }, err => console.log('ERROR on getDataCalenderEvent:' + err));
+  // await this.http.get(PLM_SPRING_URL + '/api/seveFlwReserveAsCalendarEvent/' +  e.event.id + '/' + e.event.start , { responseType: 'text' }).toPromise().then(async (data: any) => {
+  //     alert(data);
+  //     this.datacalenderShow = [];
+  //     await this.getDataCalender(this.Mount, this.projectId);
+  //   }, err => console.log('ERROR on getDataCalenderEvent:' + err));
   }
 
   async delete(id) {
@@ -173,16 +226,9 @@ export class PlmcalendarMtkComponent implements OnInit {
     this.projectId = splitted[1];
   }
 
-  async getAllThisOnPrd(date) {
-    // tslint:disable-next-line: max-line-length
-    await this.http.get(PLM_SPRING_URL + '/api/getReserveByOnPrdDt/' + date).toPromise().then(async (data: HistoryPlmPo[]) => {
-      this.thisOnPrd = data.sort();
-    }, err => console.log('ERROR on getAllThisOnPrd:' + err));
-  }
-
   async getAllByProjectId(projectId) {
     // tslint:disable-next-line: max-line-length
-    await this.http.get(PLM_SPRING_URL + '/api/getReserveOnPrdDtByPrjectId/' + projectId).toPromise().then(async (data: HistoryPlmPo[]) => {
+    await this.http.get(PLM_SPRING_URL + '/api/getDataProjectCalendar/' + projectId).toPromise().then(async (data: HistoryProjectCalendar[]) => {
       this.thisProject = data.sort();
     }, err => console.log('ERROR on getAllThisOnPrd:' + err));
   }
@@ -209,7 +255,9 @@ export class PlmcalendarMtkComponent implements OnInit {
       eventData: function(eventEl) {
         console.log(eventEl);
         return {
-          title: eventEl.innerText
+          title: eventEl.innerText,
+          id: eventEl.id,
+          description : 'No'
         };
       }
   });
@@ -222,11 +270,18 @@ export class PlmcalendarMtkComponent implements OnInit {
     }, err => console.log('ERROR on getCapacity'));
   }
 
-  async getDataPlmPo(date) {
+  async getDataProjectCalendar(date) {
     // tslint:disable-next-line: max-line-length
-    await this.http.get(PLM_SPRING_URL + '/api/getDataPlmPo/' + date).toPromise().then(async (data: any[]) => {
-      this.dataPlmPo = data;
-    }, err => console.log('ERROR on getDataPlmPo'));
+    await this.http.get(PLM_SPRING_URL + '/api/getDataProjectCalendar/' + date).toPromise().then(async (data: any[]) => {
+      this.dataProjectCalendar = data;
+    }, err => console.log('ERROR on getDataProjectCalendar'));
+  }
+
+  async getDataProjectEvent(projectId) {
+    // tslint:disable-next-line: max-line-length
+    await this.http.get(PLM_SPRING_URL + '/api/getFlwReserveAsCalendarEvent/' + projectId).toPromise().then(async (data: any[]) => {
+      this.dataProjetEvent = data;
+    }, err => console.log('ERROR on getFlwReserveAsCalendarEvent'));
   }
 
   async setdata() {
@@ -237,60 +292,30 @@ export class PlmcalendarMtkComponent implements OnInit {
 
   async setdataTest() {
 
-    this.datacalenderShow = [
-      {
-        title: '<li>test20200225FBB_03</li>',
-        date: '2020-03-03T04:09:13.122Z',
-        backgroundColor: '#D07CDB',
-        id: '221d7051-2591-4581-ab29-652cfcd839ad',
-        editable: true,
-       description: 'Y'
-      },
-      {
-        title: '<li>test20200225FBB_05</li>',
-        date: '2020-03-03T04:09:13.122Z',
-        backgroundColor: '#D07CDB',
-        id: '64a402d6-f12a-4b0c-9f99-203001960da4',
-        editable: true,
-       description: 'Y'
-      },
-      {
-        title: '<li>test20200225FBB_04</li>',
-        date: '2020-03-03T04:09:13.122Z',
-        backgroundColor: '#D07CDB',
-        id: 'e1718f5b-24cc-4cdd-9fe5-8a5dadfa17e1',
-        editable: true,
-       description: 'Y'
-      },
-      {
-        title: '<li>test20200225FBB_01</li>',
-        date: '2020-03-03T04:09:13.122Z',
-        backgroundColor: '#D07CDB',
-        id: '6a4f12a3-7c18-420f-a71a-d757fbd8ddbe',
-        editable: true,
-       description: 'Y'
-      },
-      {
-        title: '<li>test po 20200203 11</li>',
-        date: '2020-03-03T04:09:13.122Z',
-        backgroundColor: '#D07CDB',
-        id: '329b8dbe-d017-4abf-aaba-73855fb85b2f',
-        editable: true,
-       description: 'Y'
-      },
-      {
-        title: '<li>test20200225FBB_02</li>',
-        date: '2020-03-03T04:09:13.122Z',
-        backgroundColor: '#D07CDB',
-        id: 'b85f6dd0-fa3c-4e17-b3dd-bcee58c2032c',
-        editable: true,
-       description: 'Y'
-      }
-    ];
+    // this.datacalenderShow = [
+    //   {
+    //     title: '<li>test20200225FBB_03</li>',
+    //     date: '2020-03-03T04:09:13.122Z',
+    //     backgroundColor: '#D07CDB',
+    //     id: '221d7051-2591-4581-ab29-652cfcd839ad',
+    //     editable: true,
+    //    description: 'Y'
+    //   },
+    //   {
+    //     title: '<li>test20200225FBB_02</li>',
+    //     date: '2020-03-03T04:09:13.122Z',
+    //     backgroundColor: '#D07CDB',
+    //     id: 'b85f6dd0-fa3c-4e17-b3dd-bcee58c2032c',
+    //     editable: true,
+    //    description: 'Y'
+    //   }
+    // ];
   }
-
-  eventDragStop(model) {
-    console.log(model);
+  async getCapacityAllMount(day) {
+    // tslint:disable-next-line:max-line-length
+  return  await this.http.get(PLM_SPRING_URL + '/api/getCapAsCalendar/' + day).toPromise().then(async (data: boolean) => {
+    return data;
+    }, err => console.log('ERROR on getFlwReserveAsCalendarEvent'));
   }
   // end class
 }
@@ -337,16 +362,13 @@ export interface FlwProductDetailCode {
   productDetailRowId: string;
 }
 
-export interface HistoryPlmPo {
-  rowId: string;
-  projectRowId: string;
+export interface HistoryProjectCalendar {
   projectCode: string;
-  poRowId: string;
-  productName: string;
-  promotionGroup: string;
+  projectName: string;
+  poGroup: string;
   onPrdDt: Date;
   submitDt: Date;
-  status: string;
+  projectRowId: string;
 }
 
 // rendering: 'background',
