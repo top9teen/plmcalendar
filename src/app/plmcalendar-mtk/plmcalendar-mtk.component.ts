@@ -53,7 +53,6 @@ export class PlmcalendarMtkComponent implements OnInit {
   }
 
   async ngOnInit() {
-
     this.isSaving = true;
     this.setVariableFromQueryParams();
     this.istable = false;
@@ -111,6 +110,18 @@ export class PlmcalendarMtkComponent implements OnInit {
     this.modalRefshow.hide();
   }
 
+  async eventClick(model) {
+    console.log(model);
+      this.Datamulti = [];
+      // tslint:disable-next-line:max-line-length
+      await this.http.get(PLM_SPRING_URL + '/report/calendarDetailsMkt/' + model.event.id).toPromise().then(async (data: CalendarDetails[]) => {
+        this.Datamulti = data;
+      }, err => console.log('ERROR on calendarDetails'));
+      this.modalRefshow.show();
+
+  }
+
+
   eventRender(e) {
     // console.log(e.event._def);
     e.el.querySelectorAll('.fc-title')[0].innerHTML = e.el.querySelectorAll('.fc-title')[0].innerText;
@@ -118,14 +129,12 @@ export class PlmcalendarMtkComponent implements OnInit {
       console.log(e.event._instance.range.start);
       this.isSaving = true;
       // tslint:disable-next-line:max-line-length
-      this.http.get(PLM_SPRING_URL + '/api/seveFristValue/' +  e.event.id + '/' + e.event._instance.range.start , { responseType: 'text' }).toPromise().then();
-       alert('Add Data Success');
+      this.http.get(PLM_SPRING_URL + '/api/seveFristValue/' +  e.event.id + '/' + e.event._instance.range.start  , { responseType: 'text' }).toPromise().then(async (data: any) => {
+      alert(data);
       location.reload();
-    } else {
-
+    }, err => console.log('ERROR on getDataCalenderEvent:' + err));
     }
     // console.log('e', e.el.querySelectorAll('.fc-title')[0]);
-
   }
 
  async handleDatesRender(e) {
@@ -196,7 +205,7 @@ export class PlmcalendarMtkComponent implements OnInit {
     this.setOnPrdDate = e.dateStr;
    await this.getCapacity(e.dateStr, this.projectId);
    await this.getDataProjectCalendar(e.dateStr);
-   await this.getAllByProjectId(e.dateStr);
+  //  await this.getAllByProjectId(e.dateStr);
    this.isSaving = false;
   }
 
@@ -218,19 +227,23 @@ export class PlmcalendarMtkComponent implements OnInit {
   }
 
   async delete(id) {
-    // alert(id);
+    this.isSaving = true;
+    // tslint:disable-next-line:max-line-length
+   await this.http.get(PLM_SPRING_URL + '/api/deleteFristValue/' +  id , { responseType: 'text' }).toPromise().then(async (data: any) => {
+
+      // location.reload();
+      await this.getDataCalender(this.Mount, this.projectId);
+      await this.getDataProjectEvent(this.projectId);
+      await this.getCapacity(this.setOnPrdDate, this.projectId);
+      await this.getDataProjectCalendar(this.setOnPrdDate);
+      alert(data);
+    }, err => console.log('ERROR on deleteFristValue:' + err));
+    this.isSaving = false;
   }
 
   async setVariableFromQueryParams() {
     let splitted = window.location.href.split('=');
     this.projectId = splitted[1];
-  }
-
-  async getAllByProjectId(projectId) {
-    // tslint:disable-next-line: max-line-length
-    await this.http.get(PLM_SPRING_URL + '/api/getDataProjectCalendar/' + projectId).toPromise().then(async (data: HistoryProjectCalendar[]) => {
-      this.thisProject = data.sort();
-    }, err => console.log('ERROR on getAllThisOnPrd:' + err));
   }
 
   setToolsCalendar() {
@@ -272,8 +285,8 @@ export class PlmcalendarMtkComponent implements OnInit {
 
   async getDataProjectCalendar(date) {
     // tslint:disable-next-line: max-line-length
-    await this.http.get(PLM_SPRING_URL + '/api/getDataProjectCalendar/' + date).toPromise().then(async (data: any[]) => {
-      this.dataProjectCalendar = data;
+    await this.http.get(PLM_SPRING_URL + '/api/getDataProjectCalendar/' + date).toPromise().then(async (data: HistoryProjectCalendar[]) => {
+      this.thisProject = data.sort();
     }, err => console.log('ERROR on getDataProjectCalendar'));
   }
 
@@ -363,6 +376,7 @@ export interface FlwProductDetailCode {
 }
 
 export interface HistoryProjectCalendar {
+  rowId: string;
   projectCode: string;
   projectName: string;
   poGroup: string;
