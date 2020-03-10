@@ -3,7 +3,7 @@
 <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' rel='stylesheet' />
 <div class="container">
   <div class="row" >
-      <div class="col-md-9">
+      <div class="col-md-8">
         <full-calendar *ngIf="options"
           [editable]="true"
           [eventLimit]="true"
@@ -23,7 +23,7 @@
           >
         </full-calendar>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div #external>
           <p>
             <strong>Project Event</strong>
@@ -74,7 +74,7 @@
     <div *ngIf="istable" class="col-md-9">
       <div class="panel-heading cursor-point">
         <h4 class="h4-panel-header">
-          History Project On Prd / {{onPrdDate | date:'dd/MM/yyy'}}
+          History Project On Prd {{onPrdDate | date:'dd/MM/yyy'}}
         </h4>
       </div>
       <div class="col-md-12" class="panel-body" class="collapse-panel">
@@ -84,7 +84,7 @@
             <tr style="text-align: center;">
               <th class="text-center">No</th>
               <th class="text-center">Project Code</th>
-              <th class="text-center">Product Name</th>
+              <th class="text-center">Project Name</th>
               <th class="text-center">Po Group</th>
               <th class="text-center">On Production Date</th>
               <th class="text-center">Submit Date</th>
@@ -124,7 +124,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title pull-left">Detail || กำลังทำครับ</h4>
+        <h4 class="modal-title pull-left">Detail {{pjCode}}</h4>
         <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
           <span aria-hidden="true">&times;</span>
         </button>

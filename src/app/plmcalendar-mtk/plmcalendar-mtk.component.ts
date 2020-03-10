@@ -39,7 +39,7 @@ export class PlmcalendarMtkComponent implements OnInit {
   Mount: string;
   differ: any;
   calendar: any;
-
+  pjCode: string;
   cursorStatus: string;
   // isCollapsed: boolean;
 
@@ -95,6 +95,7 @@ export class PlmcalendarMtkComponent implements OnInit {
             date:  setdate,
             backgroundColor: color,
             id: data[index].rowId,
+            code: data[index].productNameMkt,
             editable: statusEdit,
             description : data[index].description
           };
@@ -113,6 +114,8 @@ export class PlmcalendarMtkComponent implements OnInit {
   async eventClick(model) {
     console.log(model);
       this.Datamulti = [];
+      this.pjCode = model.event._def.extendedProps.code;
+      console.log(this.pjCode);
       // tslint:disable-next-line:max-line-length
       await this.http.get(PLM_SPRING_URL + '/report/calendarDetailsMkt/' + model.event.id).toPromise().then(async (data: CalendarDetails[]) => {
         this.Datamulti = data;
@@ -210,7 +213,8 @@ export class PlmcalendarMtkComponent implements OnInit {
   }
 
  async updateEvent(e) {
-   console.log(e);
+   console.log(e + 'change');
+   this.isSaving = true;
   this.istable = false;
   // console.log(e.event.id);
   // console.log(e);
@@ -219,11 +223,12 @@ export class PlmcalendarMtkComponent implements OnInit {
   // console.log(e.event._def.extendedProps.description);
 
   // tslint:disable-next-line:max-line-length
-  // await this.http.get(PLM_SPRING_URL + '/api/seveFlwReserveAsCalendarEvent/' +  e.event.id + '/' + e.event.start , { responseType: 'text' }).toPromise().then(async (data: any) => {
-  //     alert(data);
-  //     this.datacalenderShow = [];
-  //     await this.getDataCalender(this.Mount, this.projectId);
-  //   }, err => console.log('ERROR on getDataCalenderEvent:' + err));
+  await this.http.get(PLM_SPRING_URL + '/api/seveFlwReserveAsCalendarEvent/' +  e.event.id + '/' + e.event.start , { responseType: 'text' }).toPromise().then(async (data: any) => {
+      alert(data);
+      this.datacalenderShow = [];
+      await this.getDataCalender(this.Mount, this.projectId);
+    }, err => console.log('ERROR on getDataCalenderEvent:' + err));
+    this.isSaving = false;
   }
 
   async delete(id) {
