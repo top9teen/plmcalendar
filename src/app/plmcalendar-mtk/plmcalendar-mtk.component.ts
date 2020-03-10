@@ -20,6 +20,8 @@ export class PlmcalendarMtkComponent implements OnInit {
   @ViewChild('external') external: ElementRef;
   @ViewChild('modalRefshow')
   modalRefshow: ModalDirective;
+  @ViewChild('modalRefshowUser')
+  modalRefshowUser: ModalDirective;
 
   datacalender: EventInput[];
 
@@ -43,9 +45,9 @@ export class PlmcalendarMtkComponent implements OnInit {
   cursorStatus: string;
   // isCollapsed: boolean;
 
-  dataCapacity: any[];
+  dataCapacity: any;
   dataProjectCalendar: any[];
-  dataDayOnPrd: Array<string>;
+  dataDayOnPrd: Array<string> = [];
   constructor(
     public http: HttpClient,
     private fb: FormBuilder,
@@ -70,8 +72,10 @@ export class PlmcalendarMtkComponent implements OnInit {
     }, 500);
   }
 
-  async getDataCalender(date, projectId) {
+  async getDataCalender(date, projectId, listday) {
+    this.isSaving = true;
     // this.datacalender = [];
+    this.datacalenderShow = [];
     let simpleData: EventInput[];
     simpleData = [];
     // tslint:disable-next-line: max-line-length
@@ -102,9 +106,37 @@ export class PlmcalendarMtkComponent implements OnInit {
           simpleData.push(data2);
       }
 
+      for (let index = 0; index < listday.length; index++) {
+        let data3: EventInput;
+        let setdate = new Date(listday[index] + 'T00:00:00');
+        let color: string ;
+        // tslint:disable-next-line:max-line-length
+      await  this.http.get(PLM_SPRING_URL + '/api/getCapacity/' +  projectId + '/' + listday[index]).toPromise().then(async (data_: any) => {
+
+        if (data_.actualLoadLeft > 0) {
+          color = '#D07CDB';
+        } else {
+          color = '#ff6080';
+        }
+          data3 = [];
+          data3 = {
+            // tslint:disable-next-line:max-line-length
+            title: '<b>Cap ' + data_.customerType + ' : </b>' + data_.actualLoadMax + '/' + data_.actualLoadUse + '/' + data_.actualLoadLeft,
+            date:  setdate,
+            backgroundColor: color,
+            id: listday[index],
+            editable: false,
+            description : 'Capacity'
+          };
+          simpleData.push(data3);
+          }, err => console.log('ERROR on getCapacity'));
+    }
     }, err => console.log('ERROR on getDataCalender'));
-    this.datacalenderShow = simpleData;
-    // console.log(this.datacalenderShow);
+    // tslint:disable-next-line:max-line-length
+
+ // get data onprd
+  this.datacalenderShow = simpleData;
+    console.log(this.datacalenderShow);
   }
 
   hideModal() {
@@ -112,7 +144,9 @@ export class PlmcalendarMtkComponent implements OnInit {
   }
 
   async eventClick(model) {
-    console.log(model);
+    // tslint:disable-next-line:max-line-length
+    if (model.event._def.extendedProps.description !== null && model.event._def.extendedProps.description !== 'Capacity') {
+      console.log(model);
       this.Datamulti = [];
       this.pjCode = model.event._def.extendedProps.code;
       console.log(this.pjCode);
@@ -122,11 +156,12 @@ export class PlmcalendarMtkComponent implements OnInit {
       }, err => console.log('ERROR on calendarDetails'));
       this.modalRefshow.show();
 
+    }
   }
 
 
   eventRender(e) {
-    // console.log(e.event._def);
+    // console.log(e);
     e.el.querySelectorAll('.fc-title')[0].innerHTML = e.el.querySelectorAll('.fc-title')[0].innerText;
     if (e.event._def.extendedProps.description === 'No') {
       console.log(e.event._instance.range.start);
@@ -143,7 +178,9 @@ export class PlmcalendarMtkComponent implements OnInit {
  async handleDatesRender(e) {
     this.isSaving = true;
     this.Mount = e.view.title;
-
+    this.dataDayOnPrd = [];
+    this.dataCapacity = [];
+    this.thisProject = [];
     // tslint:disable-next-line:max-line-length
    for (let index = 0; index < e.el.lastElementChild.children[1]
     .children[0]
@@ -164,18 +201,20 @@ export class PlmcalendarMtkComponent implements OnInit {
       .childNodes[0]
       .cells.length; index2++) {
     // tslint:disable-next-line:max-line-length
-    // Check Color //
+    // Check Color //);
    let data = await this.getCapacityAllMount(e.el.lastElementChild.children[1]
-      .children[0]
-      .cells[0]
-      .childNodes[0]
-      .childNodes[0]
-      .childNodes[index].childNodes[0]
-      .children[0]
-      .childNodes[0]
-      .childNodes[0]
-      .cells[index2].dataset.date);
-    if (!data) {
+    .children[0]
+    .cells[0]
+    .childNodes[0]
+    .childNodes[0]
+    .childNodes[index].childNodes[0]
+    .children[0]
+    .childNodes[0]
+    .childNodes[0]
+    .cells[index2].dataset.date);
+
+      if (!data) {
+        this.isSaving = true;
       e.el.lastElementChild.children[1]
       .children[0]
       .cells[0]
@@ -187,10 +226,22 @@ export class PlmcalendarMtkComponent implements OnInit {
       .childNodes[0]
       .childNodes[0]
       .cells[index2].style.background = '#e5e8e8';
-    }
+      } else {
+        this.isSaving = true;
+        this.dataDayOnPrd.push(e.el.lastElementChild.children[1]
+          .children[0]
+          .cells[0]
+          .childNodes[0]
+          .childNodes[0]
+          .childNodes[index].childNodes[0]
+          .children[0]
+          .childNodes[0]
+          .childNodes[0]
+          .cells[index2].dataset.date);
+      }
     }
    }    // tslint:disable-next-line:max-line-length
-   await this.getDataCalender(e.view.title, this.projectId);
+   await this.getDataCalender(e.view.title, this.projectId, this.dataDayOnPrd);
    await this.getDataProjectEvent(this.projectId);
    this.isSaving = false;
     // tslint:disable-next-line:max-line-length
@@ -213,8 +264,7 @@ export class PlmcalendarMtkComponent implements OnInit {
   }
 
  async updateEvent(e) {
-   console.log(e + 'change');
-   this.isSaving = true;
+  this.isSaving = true;
   this.istable = false;
   // console.log(e.event.id);
   // console.log(e);
@@ -226,7 +276,7 @@ export class PlmcalendarMtkComponent implements OnInit {
   await this.http.get(PLM_SPRING_URL + '/api/seveFlwReserveAsCalendarEvent/' +  e.event.id + '/' + e.event.start , { responseType: 'text' }).toPromise().then(async (data: any) => {
       alert(data);
       this.datacalenderShow = [];
-      await this.getDataCalender(this.Mount, this.projectId);
+      await this.getDataCalender(this.Mount, this.projectId, this.dataDayOnPrd);
     }, err => console.log('ERROR on getDataCalenderEvent:' + err));
     this.isSaving = false;
   }
@@ -237,7 +287,7 @@ export class PlmcalendarMtkComponent implements OnInit {
    await this.http.get(PLM_SPRING_URL + '/api/deleteFristValue/' +  id , { responseType: 'text' }).toPromise().then(async (data: any) => {
 
       // location.reload();
-      await this.getDataCalender(this.Mount, this.projectId);
+      await this.getDataCalender(this.Mount, this.projectId , this.dataDayOnPrd);
       await this.getDataProjectEvent(this.projectId);
       await this.getCapacity(this.setOnPrdDate, this.projectId);
       await this.getDataProjectCalendar(this.setOnPrdDate);
@@ -283,7 +333,7 @@ export class PlmcalendarMtkComponent implements OnInit {
 
   async getCapacity(date, projectId) {
     // tslint:disable-next-line: max-line-length
-    await this.http.get(PLM_SPRING_URL + '/api/getCapacity/' +  projectId + '/' + date).toPromise().then(async (data: any[]) => {
+    await this.http.get(PLM_SPRING_URL + '/api/getCapacity/' +  projectId + '/' + date).toPromise().then(async (data: any) => {
       this.dataCapacity = data;
     }, err => console.log('ERROR on getCapacity'));
   }
