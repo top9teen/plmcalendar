@@ -9,6 +9,7 @@ import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
 import timeGrigPlugin from '@fullcalendar/timegrid';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { PLM_SPRING_URL } from '../app.properties';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-plmcalendar-mtk',
@@ -88,10 +89,10 @@ export class PlmcalendarMtkComponent implements OnInit {
           let color: string ;
         if (data[index].projectRowId === projectId) {
           statusEdit = true;
-          color = '#5fd508';
+          color = '#FFA463';
         } else {
           statusEdit = false;
-          color = '#f48d11';
+          color = '#FF6A00';
         }
           data2 = [];
           data2 = {
@@ -114,7 +115,7 @@ export class PlmcalendarMtkComponent implements OnInit {
       await  this.http.get(PLM_SPRING_URL + '/api/getCapacity/' +  projectId + '/' + listday[index]).toPromise().then(async (data_: any) => {
 
         if (data_.actualLoadLeft > 0) {
-          color = '#D07CDB';
+          color = '#00B64F';
         } else {
           color = '#ff6080';
         }
@@ -164,12 +165,23 @@ export class PlmcalendarMtkComponent implements OnInit {
     // console.log(e);
     e.el.querySelectorAll('.fc-title')[0].innerHTML = e.el.querySelectorAll('.fc-title')[0].innerText;
     if (e.event._def.extendedProps.description === 'No') {
-      console.log(e.event._instance.range.start);
+      // console.log(e.event._instance.range.start);
       this.isSaving = true;
       // tslint:disable-next-line:max-line-length
       this.http.get(PLM_SPRING_URL + '/api/seveFristValue/' +  e.event.id + '/' + e.event._instance.range.start  , { responseType: 'text' }).toPromise().then(async (data: any) => {
-      alert(data);
-      location.reload();
+       let type;
+        if (data === 'Success') {
+          type = 'success';
+       } else {
+        type = 'error';
+       }
+        Swal.fire({
+          icon: type,
+          text: data
+        }).then(() => {
+          location.reload();
+      });
+        // alert(data);
     }, err => console.log('ERROR on getDataCalenderEvent:' + err));
     }
     // console.log('e', e.el.querySelectorAll('.fc-title')[0]);
@@ -274,7 +286,17 @@ export class PlmcalendarMtkComponent implements OnInit {
 
   // tslint:disable-next-line:max-line-length
   await this.http.get(PLM_SPRING_URL + '/api/seveFlwReserveAsCalendarEvent/' +  e.event.id + '/' + e.event.start , { responseType: 'text' }).toPromise().then(async (data: any) => {
-      alert(data);
+      // alert(data);
+      let type;
+      if (data === 'Success') {
+        type = 'success';
+     } else {
+      type = 'error';
+     }
+      Swal.fire({
+        icon: type,
+        text: data
+      });
       this.datacalenderShow = [];
       await this.getDataCalender(this.Mount, this.projectId, this.dataDayOnPrd);
     }, err => console.log('ERROR on getDataCalenderEvent:' + err));
@@ -291,7 +313,17 @@ export class PlmcalendarMtkComponent implements OnInit {
       await this.getDataProjectEvent(this.projectId);
       await this.getCapacity(this.setOnPrdDate, this.projectId);
       await this.getDataProjectCalendar(this.setOnPrdDate);
-      alert(data);
+      let type;
+      if (data === 'Success') {
+        type = 'success';
+     } else {
+      type = 'error';
+     }
+      Swal.fire({
+        icon: type,
+        text: data
+      });
+      // alert(data);
     }, err => console.log('ERROR on deleteFristValue:' + err));
     this.isSaving = false;
   }
@@ -303,15 +335,13 @@ export class PlmcalendarMtkComponent implements OnInit {
 
   setToolsCalendar() {
     this.options = {
-      editable: true,
       eventLimit: true,
       droppable: true,
       locale: 'us',
-      themeSystem: 'bootstrap',
       header: {
-        left: 'prev today next ',
-        center: 'title',
-        right  : ''
+      left: 'prevYear,prev, today ,next,nextYear',
+      center: 'title',
+      right: ''
         // right  : 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
       },
       plugins: [dayGridPlugin, timeGrigPlugin, interactionPlugin],

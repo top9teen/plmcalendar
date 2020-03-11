@@ -8,13 +8,6 @@
   font-family: DBHelvethaicaX;
   src: url("./assets/fonts/DBHelvethaicaXv3.2.ttf");
 }
-
-@font-face {
-  font-family: DBHelvethaicaXBd;
-  src: url("./assets/fonts/DBHelvethaicaXBdv3.2.ttf");
-}
-
-
 .fc-title {
     font-size: 0.8em;
   }
@@ -32,13 +25,58 @@
 }
 
 .container-fluid {
-  font-family: DBHelvethaicaXBd;
+  font-family: DBHelvethaicaX;
 }
 
 body {
   font-size: 17.5px !important;
-  font-family: DBHelvethaicaXBd;
+  font-family: DBHelvethaicaX;
+}
+.fc-popover{
+  cursor: pointer;
+}
+.fc-left {
+  height: 26px;
 }
 
+/* MKT CALENDAR */
+.fc-button.fc-button-primary {
+  background-color: transparent;
+  border-color:transparent;
+  color:black;
+  font-size: 12px;
+}
 
+.fc-today-button.fc-button.fc-button-primary {
+  background-color: transparent;
+  border-color:transparent;
+  color:black;
+  font-size: 12px;
+}
+.swal2-popup{
+  width: 20em !important;
+  height: 18em  !important;
+}
 
+.swal2-container.swal2-center {
+  margin-left:-36%;
+}
+.swal2-icon{
+  margin: 0.25em auto 0.875em;
+}
+.fc-button.fc-button-primary:hover  {
+  background-color: #f7889f;
+  border-color:#fa4268;
+  color:#ffffff;
+  font-size: 15px;
+}
+.fc-head {
+  background-color: #72b4ff;
+  color:#ffffff;
+}
+.fc-center {
+  margin-left : -18%;
+}
+.swal2-actions{
+  margin: -0.75em auto 0;
+}

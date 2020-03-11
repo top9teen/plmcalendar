@@ -18,25 +18,28 @@
           (eventResize)="updateEvent($event)"
           (eventClick)="eventClick($event)"
           [height]="600"
-          defaultView="dayGridMonth"
           [weekends]="false"
           >
         </full-calendar>
       </div>
-      <div class="col-md-2">
-        <div #external>
-          <p>
-            <strong>Project Event</strong>
-          </p>
-          <div *ngFor="let item of dataProjetEvent">
-            <span class='fc-event setTs' id ='{{item.rowId}}' style = "cursor: -webkit-grab; cursor: grab">{{item.productNameMkt}}</span>
+      <div class="col-md-2 " style="margin-top: 2%;">
+    &nbsp;
+    <div class="eventPjMt">
+      <p><strong class="ststyle">Project Event</strong></p>
+    </div>
+        <div class="eventPjMtDt">
+          &nbsp;
+          <div #external >
+            <div *ngFor="let item of dataProjetEvent">
+              <span class='fc-event setTs' id ='{{item.rowId}}' style = "cursor: -webkit-grab; cursor: grab;margin-left: 7%;margin-right: 7%;">{{item.productNameMkt}}</span>
+            </div>
           </div>
         </div>
       </div>
   </div>
   <br>
   <br>
-  <div class="row">
+  <div class="row styleFont">
     <div *ngIf="istable" class="col-md-9">
       <div class="panel-heading">
         <h4 class="h4-panel-header">
@@ -69,8 +72,7 @@
       </div>
     </div>
   </div>
-
-  <div class="row">
+  <div class="row styleFont">
     <div *ngIf="istable" class="col-md-9">
       <div class="panel-heading cursor-point">
         <h4 class="h4-panel-header">
@@ -113,13 +115,14 @@
     </div>
   </div>
 </div>
+<!--  -->
 <div class="loading-curtain" *ngIf="isSaving">
   <div class="col-md-12 text-center loading-icon" style="text-align: center;">
-    <i class="fa fa-spinner fa-spin" style="font-size:80px;"></i>
+    <i class="fa fa-spinner fa-spin" style="font-size:80px; margin-left: -32%;"></i>
   </div>
 </div>
 
-<div style="margin-left: -16%;" bsModal #modalRefshow="bs-modal" class="modal fade pull-left" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+<div style="margin-left: -16%;" bsModal #modalRefshow="bs-modal" class="modal fade pull-left styleFont" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
   aria-hidden="true" (onHidden)="hideModal()">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -238,126 +241,3 @@
     </div>
   </div>
 </div>
-
-<div class="row col-md-2">
-  <div bsModal #modalRefshowUser="bs-modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
-  aria-hidden="true" (onHidden)="hideModal()">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title pull-left">Detail {{pjCode}}</h4>
-        <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div *ngFor="let row of Datamulti;let i = index" style="font-size: 15px;">
-          <!-- st  -->
-          <div class="panel panel-default">
-            <div class="row">
-              <div class="row col-md-11">
-                <div class="col-md-3">
-                  <label class="pull-right">
-                    Product Name :
-                  </label>
-                </div>
-                <div class="col-md-3">
-                  <label class="pull-left" style="margin-left:5px">
-                    <u>{{row.productName}}</u>
-                  </label>
-                </div>
-                <div class="col-md-3">
-                  <label class="pull-right">
-                    Project Owner :
-                  </label>
-                </div>
-                <div class="col-md-3">
-                  <label class="pull-left" style="margin-left:5px">
-                    <u>{{row.projectOwner}}</u>
-                  </label>
-                </div>
-              </div>
-
-              <div class="row col-md-11">
-                <div class="col-md-3">
-                  <label class="pull-right">
-                    Product Class :
-                  </label>
-                </div>
-                <div class="col-md-3">
-                  <label class="pull-left" style="margin-left:5px">
-                    <u>{{row.productClass}}</u>
-                  </label>
-                </div>
-                <div class="col-md-3">
-                  <label class="pull-right">
-                    Promotion Group :
-                  </label>
-                </div>
-                <div class="col-md-3">
-                  <label class="pull-left" style="margin-left:5px">
-                    <u>{{row.promotionGroup}}</u>
-                  </label>
-                </div>
-              </div>
-
-              <div class="row col-md-11">
-                <div class="col-md-3">
-                  <label class="pull-right">
-                    Po Sub Group :
-                  </label>
-                </div>
-                <div class="col-md-3">
-                  <label class="pull-left" style="margin-left:5px">
-                    <u>{{row.poSubGroup}}</u>
-                  </label>
-                </div>
-                <div class="col-md-3">
-                  <label class="pull-right">
-                    On Production Date :
-                  </label>
-                </div>
-                <div class="col-md-3">
-                  <label class="pull-left" style="margin-left:5px">
-                    <u>{{row.onPrdDt | date:'dd/MM/yyyy'}}</u>
-                  </label>
-                </div>
-              </div>
-
-              <div class="row col-md-11">
-                <div class="col-md-3">
-                  <label class="pull-right">
-                    Price Type :
-                  </label>
-                </div>
-                <div class="col-md-3">
-                  <label class="pull-left" style="margin-left:5px">
-                    <u> {{row.priceType == null ? '-' : row.priceType}}</u>
-                  </label>
-                </div>
-                <div class="col-md-3">
-                  <label class="pull-right">
-                    Status :
-                  </label>
-                </div>
-                <div class="col-md-3">
-                  <label class="pull-left" style="margin-left:5px">
-                    <u>{{row.status}}</u>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <hr>
-          <p></p>
-          <!-- ed  -->
-        </div>
-        <div class="text-center">
-          <button type="button" class="btn btn-danger " (click)="hideModal()">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
