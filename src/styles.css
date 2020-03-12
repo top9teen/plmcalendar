@@ -11,7 +11,9 @@
 .fc-title {
     font-size: 0.8em;
   }
-
+.fc-toolbar{
+  color: #34712c;
+  }
 .fc-time {
   display: none;
 }
@@ -43,21 +45,23 @@ body {
 .fc-button.fc-button-primary {
   background-color: transparent;
   border-color:transparent;
-  color:black;
+  color:#1fa20d;
   font-size: 12px;
 }
 
 .fc-today-button.fc-button.fc-button-primary {
   background-color: transparent;
   border-color:transparent;
-  color:black;
+  color:#1fa20d;
   font-size: 12px;
 }
 .swal2-popup{
   width: 20em !important;
   height: 18em  !important;
 }
-
+.fc-day-number{
+  color: #34712c;
+}
 .swal2-container.swal2-center {
   margin-left:-36%;
 }
@@ -65,18 +69,24 @@ body {
   margin: 0.25em auto 0.875em;
 }
 .fc-button.fc-button-primary:hover  {
-  background-color: #f7889f;
-  border-color:#fa4268;
-  color:#ffffff;
+  background-color: #8aee7d;
+  border-color:#308f24;
+  color:#18720c;
   font-size: 15px;
 }
 .fc-head {
-  background-color: #72b4ff;
-  color:#ffffff;
+  background-color: #9af28f;
+  /* 9af28f */
+  /* 72b4ff */
+  color:#18720c;
 }
 .fc-center {
   margin-left : -18%;
 }
 .swal2-actions{
   margin: -0.75em auto 0;
+}
+
+.fc-day.fc-widget-content.fc-thu.fc-today {
+  background:#acf3a2;
 }

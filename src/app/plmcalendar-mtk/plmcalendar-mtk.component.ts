@@ -67,50 +67,50 @@ export class PlmcalendarMtkComponent implements OnInit {
     this.dataProjetEvent = [];
     this.setToolsCalendar();
     this.getDataProjectEvent(this.projectId);
-    // this.getCapacityAllmont
     setTimeout(() => {
       this.isSaving = false;
-    }, 500);
+    }, 200);
   }
 
   async getDataCalender(date, projectId, listday) {
     this.isSaving = true;
-    // this.datacalender = [];
     this.datacalenderShow = [];
     let simpleData: EventInput[];
     simpleData = [];
+    for (let index = 0; index < listday.length; index++) {
     // tslint:disable-next-line: max-line-length
-    await this.http.get(PLM_SPRING_URL + '/api/getFlwReserveAsCalendar/' + date + '/' + projectId).toPromise().then(async (data: any[]) => {
+    await this.http.get(PLM_SPRING_URL + '/api/getFlwReserveAsCalendar/' + listday[index] + '/' + projectId).toPromise().then(async (data: any[]) => {
 
-      for (let index = 0; index < data.length; index++) {
+      for (let index_ = 0; index_ < data.length; index_++) {
           let data2: EventInput;
-          let setdate = new Date(data[index].onPrdDt + 'T00:00:00');
+          let setdate_ = new Date(data[index_].onPrdDt + 'T00:00:00');
           let statusEdit: boolean ;
-          let color: string ;
-        if (data[index].projectRowId === projectId) {
+          let color_: string ;
+        if (data[index_].projectRowId === projectId) {
           statusEdit = true;
-          color = '#FFA463';
+          color_ = '#FFA463';
         } else {
           statusEdit = false;
-          color = '#FF6A00';
+          color_ = '#FF6A00';
         }
           data2 = [];
           data2 = {
-            title: '<li>' + data[index].productNameMkt + ' : ' + data[index].user + ' (' + data[index].count + ')</li>',
-            date:  setdate,
-            backgroundColor: color,
-            id: data[index].rowId,
-            code: data[index].productNameMkt,
+            // tslint:disable-next-line:max-line-length
+            title: '<li>' + data[index_].productNameMkt + ' : ' + data[index_].user + ' (' + data[index_].count + ')</li>',
+            date:  setdate_,
+            backgroundColor: color_,
+            id: data[index_].rowId,
+            code: data[index_].productNameMkt,
             editable: statusEdit,
-            description : data[index].description
+            description : data[index_].description
           };
           simpleData.push(data2);
       }
-
-      for (let index = 0; index < listday.length; index++) {
+    }, err => console.log('ERROR on getDataCalender'));
         let data3: EventInput;
         let setdate = new Date(listday[index] + 'T00:00:00');
         let color: string ;
+
         // tslint:disable-next-line:max-line-length
       await  this.http.get(PLM_SPRING_URL + '/api/getCapacity/' +  projectId + '/' + listday[index]).toPromise().then(async (data_: any) => {
 
@@ -131,13 +131,12 @@ export class PlmcalendarMtkComponent implements OnInit {
           };
           simpleData.push(data3);
           }, err => console.log('ERROR on getCapacity'));
-    }
-    }, err => console.log('ERROR on getDataCalender'));
-    // tslint:disable-next-line:max-line-length
 
+    // tslint:disable-next-line:max-line-length
+  }
  // get data onprd
   this.datacalenderShow = simpleData;
-    console.log(this.datacalenderShow);
+    // console.log(this.datacalenderShow);
   }
 
   hideModal() {
