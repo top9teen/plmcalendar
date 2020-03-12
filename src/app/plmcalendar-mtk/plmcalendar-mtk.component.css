@@ -1,0 +1,53 @@
+
+.loading-curtain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .loading-icon {
+    margin-top: 20%;
+    color: whitesmoke;
+  }
+
+  .pointer {
+    cursor: pointer;
+  }
+  @font-face {
+    font-family: DBHelvethaicaX;
+    src: url("../../assets/fonts/DBHelvethaicaXv3.2.ttf");
+  }
+
+  .container {
+    width: 1250px;
+  }
+  .setTs {
+    border:1px solid #055cb8
+  }
+.styleFont {
+  font-size: 17.5px !important;
+  font-family: DBHelvethaicaX;
+}
+.eventPjMtDt{
+  margin-top: 11%;
+  background-color: #c4fabd;
+  height: 80%;
+  width: 117%;
+}
+.eventPjMt{
+  margin-top: 8%;
+  background-color: #c4fabd;
+  height: 7%;
+  width: 117%;
+
+}
+.eventPjCu{
+  background-color: #f6b571;
+}
+.ststyle {
+  margin-left: 15%;
+}
